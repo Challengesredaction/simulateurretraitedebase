@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulateur retraite – Challenges</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F5;
+    --rouge: #F43423;
+    --jaune: #FFDC27;
+    --gris: #2D2D2D;
+    --gris-moyen: #6B6B6B;
+    --gris-clair: #E5E4E2;
+    --blanc: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: var(--bg);
+    color: var(--gris);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  .header {
+    background: var(--blanc);
+    border-bottom: 3px solid var(--rouge);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .header-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--rouge);
+  }
+  .header-sep {
+    width: 1px;
+    height: 22px;
+    background: var(--gris-clair);
+  }
+  .header-title {
+    font-size: 12px;
+    color: var(--gris-moyen);
+    font-style: italic;
+  }
+
+  .hero {
+    max-width: 700px;
+    margin: 40px auto 0;
+    padding: 0 20px;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: var(--rouge);
+    color: var(--blanc);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: clamp(18px, 3.5vw, 27px);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--gris);
+    margin-bottom: 14px;
+  }
+  .hero h1 em {
+    color: var(--rouge);
+    font-style: normal;
+  }
+  .hero-sub {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--gris-moyen);
+    font-style: italic;
+    border-left: 3px solid var(--jaune);
+    padding-left: 14px;
+    margin-bottom: 32px;
+  }
+
+  .simulateur {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .card {
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--rouge);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gris-clair);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 28px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--gris-moyen);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--rouge);
+    pointer-events: none;
+    font-size: 13px;
+  }
+
+  .field select {
+    width: 100%;
+    padding: 11px 36px 11px 12px;
+    border: 1.5px solid var(--gris-clair);
+    background: var(--bg);
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    color: var(--gris);
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    transition: border-color 0.2s;
+    border-radius: 0;
+    cursor: pointer;
+  }
+  .field select:focus { border-color: var(--rouge); }
+
+  .range-display {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--rouge);
+    margin-bottom: 10px;
+    line-height: 1;
+  }
+  .range-display small {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--gris-moyen);
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 4px;
+    accent-color: var(--rouge);
+    cursor: pointer;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .range-minmax {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--gris-moyen);
+  }
+
+  .btn {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 15px;
+    background: var(--rouge);
+    color: var(--blanc);
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: #d42d1e; }
+
+  /* RÉSULTAT */
+  .resultat {
+    display: none;
+    background: var(--blanc);
+    border: 1px solid var(--gris-clair);
+    border-top: 4px solid var(--rouge);
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .resultat.visible {
+    display: block;
+    animation: fadeUp 0.35s ease forwards;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-header {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--rouge);
+    margin-bottom: 10px;
+  }
+
+  .verdict {
+    font-size: clamp(15px, 2.5vw, 19px);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--gris);
+    margin-bottom: 22px;
+  }
+  .verdict .accent { color: var(--rouge); }
+
+  .chiffres {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .chiffre-bloc {
+    background: var(--bg);
+    padding: 16px 18px;
+    border-left: 3px solid var(--jaune);
+  }
+  .chiffre-bloc.vous { border-left-color: var(--rouge); }
+
+  .chiffre-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gris-moyen);
+    margin-bottom: 6px;
+  }
+  .chiffre-val {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gris);
+    line-height: 1.1;
+  }
+  .chiffre-val small {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--gris-moyen);
+  }
+
+  .delta-badge {
+    display: inline-block;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 22px;
+  }
+  .delta-badge.plus  { background: #e8f5e9; color: #2e7d32; }
+  .delta-badge.moins { background: #fce4e1; color: #c0291a; }
+  .delta-badge.egal  { background: #fff8e1; color: #8a6500; }
+
+  .nuance {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--gris-moyen);
+    font-style: italic;
+    border-top: 1px solid var(--gris-clair);
+    padding-top: 18px;
+  }
+  .nuance strong { color: var(--gris); font-style: normal; }
+
+  .sources {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 18px 20px 0;
+    font-size: 11px;
+    color: var(--gris-moyen);
+    line-height: 1.7;
+    font-style: italic;
+    border-top: 1px solid var(--gris-clair);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 520px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .chiffres  { grid-template-columns: 1fr; }
+    .card, .resultat { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-label">Challenges</span>
+  <div class="header-sep"></div>
+  <span class="header-title">Retraite &amp; pouvoir d'achat</span>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">Simulateur</div>
+  <h1>Pension de base, réversion… <em>Gagnez-vous plus que le Français moyen</em>, selon votre profil ?</h1>
+  <p class="hero-sub">Selon les dernières statistiques de la Cnav au 31 décembre 2025, un retraité du régime général perçoit en moyenne 831 euros bruts par mois. Mais ce chiffre masque des réalités très différentes selon le sexe, le type de droit ou la durée de carrière. Situez-vous en quelques secondes.</p>
+</div>
+
+<div class="simulateur">
+
+  <div class="card">
+    <div class="section-label">Votre profil</div>
+    <div class="form-grid">
+
+      <div class="field">
+        <label>Vous êtes</label>
+        <div class="select-wrap">
+          <select id="sexe">
+            <option value="HF">Homme ou femme (moyenne générale)</option>
+            <option value="H">Un homme</option>
+            <option value="F">Une femme</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Type de pension</label>
+        <div class="select-wrap">
+          <select id="type">
+            <option value="direct">Droit direct (ma propre carrière)</option>
+            <option value="directComplet">Droit direct — carrière complète</option>
+            <option value="reversion">Réversion (conjoint survivant)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" style="grid-column: 1 / -1;">
+        <label>Votre pension mensuelle brute estimée</label>
+        <div class="range-display"><span id="rangeDisplay">1 000</span> <small>€ / mois</small></div>
+        <input type="range" id="pensionRange" min="200" max="3000" step="10" value="1000">
+        <div class="range-minmax"><span>200 €</span><span>3 000 €</span></div>
+      </div>
+
+    </div>
+    <button class="btn" id="btnCalculer">Calculer ma position →</button>
+  </div>
+
+  <div class="resultat" id="resultat">
+    <div class="result-header">Votre résultat</div>
+    <div class="verdict" id="r-verdict"></div>
+    <div class="chiffres">
+      <div class="chiffre-bloc vous">
+        <div class="chiffre-label">Votre pension</div>
+        <div class="chiffre-val" id="r-vous"></div>
+      </div>
+      <div class="chiffre-bloc">
+        <div class="chiffre-label">Moyenne de référence</div>
+        <div class="chiffre-val" id="r-moy"></div>
+      </div>
+    </div>
+    <div class="delta-badge" id="r-delta"></div>
+    <div class="nuance" id="r-nuance"></div>
+  </div>
+
+  <div class="sources">
+    Source : Cnav, <em>Les principaux chiffres du régime général au 31 décembre 2025</em>, publiés en février 2026. Montants bruts avant prélèvements sociaux. Non compris les retraites complémentaires (Agirc-Arrco) et autres régimes de base.
+  </div>
+
+</div>
+
+<script>
+  // Curseur temps réel
+  document.getElementById('pensionRange').addEventListener('input', function() {
+    document.getElementById('rangeDisplay').textContent = Number(this.value).toLocaleString('fr-FR');
+  });
+
+  // Données Cnav 31/12/2025
+  var refs = {
+    direct:        { HF: 831,  H: 972,  F: 711  },
+    directComplet: { HF: 1280, H: 1400, F: 1153 },
+    reversion:     { HF: 404,  H: 283,  F: 415  }
+  };
+
+  var labelsRef = {
+    direct:        { HF: "des titulaires d'un droit direct",             H: "des hommes titulaires d'un droit direct",       F: "des femmes titulaires d'un droit direct"       },
+    directComplet: { HF: "des retraités ayant une carrière complète",    H: "des hommes ayant une carrière complète",         F: "des femmes ayant une carrière complète"         },
+    reversion:     { HF: "des bénéficiaires d'une pension de réversion", H: "des hommes bénéficiaires d'une réversion",       F: "des femmes bénéficiaires d'une réversion"       }
+  };
+
+  var nuances = {
+    direct:        "Ces 831 euros de moyenne concernent l'ensemble des titulaires d'un droit direct, y compris ceux qui n'ont cotisé qu'une partie de leur carrière au régime général. <strong>30,5 % d'entre eux bénéficient du minimum contributif</strong>, un plancher de pension pour ceux qui ont cotisé longtemps sur de faibles salaires. Ce taux monte à 41,2 % chez les femmes, contre 17,8 % chez les hommes. Ces montants n'incluent pas les retraites complémentaires (Agirc-Arrco).",
+    directComplet: "Ces 1 280 euros correspondent aux retraités ayant effectué l'intégralité de leur carrière au régime général, à taux plein et sans prorata. C'est la référence la plus représentative d'une retraite « pleine ». <strong>L'écart homme-femme y reste de 247 euros</strong> — preuve que des décennies de salaires inférieurs et de temps partiels continuent de peser, même après une carrière entière.",
+    reversion:     "La pension de réversion est versée au conjoint survivant. Ses bénéficiaires sont à <strong>plus de 91 % des femmes</strong>. Pour 672 606 d'entre eux, il s'agit de l'unique ressource perçue du régime général, sans droit direct propre. Ces montants sont bruts et n'intègrent pas les réversions des régimes complémentaires."
+  };
+
+  function fmt(n) {
+    return Number(n).toLocaleString('fr-FR');
+  }
+
+  function calculer() {
+    var sexe    = document.getElementById('sexe').value;
+    var type    = document.getElementById('type').value;
+    var pension = parseInt(document.getElementById('pensionRange').value, 10);
+
+    var ref     = refs[type][sexe];
+    var diff    = pension - ref;
+    var diffPct = Math.round(Math.abs(diff / ref) * 100);
+    var labelR  = labelsRef[type][sexe];
+
+    // Verdict
+    var verdictHTML;
+    if (Math.abs(diff) < 30) {
+      verdictHTML = 'Vous êtes <span class="accent">dans la moyenne</span> ' + labelR + '.';
+    } else if (diff > 0) {
+      verdictHTML = 'Vous percevez <span class="accent">' + fmt(diff) + ' € de plus</span> que la moyenne ' + labelR + '.';
+    } else {
+      verdictHTML = 'Vous percevez <span class="accent">' + fmt(Math.abs(diff)) + ' € de moins</span> que la moyenne ' + labelR + '.';
+    }
+
+    // Badge
+    var deltaClass, deltaText;
+    if (Math.abs(diff) < 30) {
+      deltaClass = 'egal';
+      deltaText  = '≈ Dans la moyenne (écart inférieur à 30 €)';
+    } else if (diff > 0) {
+      deltaClass = 'plus';
+      deltaText  = '▲ +' + diffPct + ' % au-dessus de la moyenne';
+    } else {
+      deltaClass = 'moins';
+      deltaText  = '▼ ' + diffPct + ' % en dessous de la moyenne';
+    }
+
+    // Injection DOM
+    document.getElementById('r-verdict').innerHTML = verdictHTML;
+    document.getElementById('r-vous').innerHTML    = fmt(pension) + ' <small>€/mois</small>';
+    document.getElementById('r-moy').innerHTML     = fmt(ref) + ' <small>€/mois</small>';
+
+    var deltaEl = document.getElementById('r-delta');
+    deltaEl.className   = 'delta-badge ' + deltaClass;
+    deltaEl.textContent = deltaText;
+
+    document.getElementById('r-nuance').innerHTML = nuances[type];
+
+    // Affichage + animation
+    var el = document.getElementById('resultat');
+    el.classList.remove('visible');
+    void el.offsetWidth; // force reflow
+    el.classList.add('visible');
+    setTimeout(function() {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+
+  document.getElementById('btnCalculer').addEventListener('click', calculer);
+</script>
+</body>
+</html>
